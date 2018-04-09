@@ -9,8 +9,12 @@ export default class TaskItem extends React.Component {
     super(props);
    // this.state = {done: props.done, priority: props.priority};
     this.state ={
-      PickerValue:''
-  };
+      PickerValue: '*****'.substring(5 - props.priority),
+      priority: props.priority
+    };
+
+    // Make sure "this" is defined
+    this.changePriority.bind(this)
   }
 
  // adjustPriority(delta) {
@@ -23,6 +27,14 @@ export default class TaskItem extends React.Component {
       //return {...prev, priority: p}
     //})
   //}
+
+  changePriority(itemValue, itemIndex) {
+    console.log("CHANGE PRIORITY", itemValue, itemIndex)
+    this.setState(prev => {
+      this.props.onAdjustPriority(itemValue.length, this.props.id)
+      return {...prev, PickerValue: itemValue, priority: itemValue.length}
+    })
+  }
 
   toggleDone() {
     this.setState(prev => {
@@ -73,18 +85,14 @@ export default class TaskItem extends React.Component {
 
           
           <View style={styles.middleRow}>
-          <View>
+          <View style={styles.pickerView}>
             <Picker
             style={{width:'80%'}}
 
 
             selectedValue={this.state.PickerValue}
-            onValueChange = {(itemValue, itemIndex) => this.setState({PickerValue:itemValue}) }
-
-
-
-
-            >
+            onValueChange = {(v,i) => this.changePriority(v,i)}
+           >
             <Picker.Item label="Choose Priority" value=" " />
             <Picker.Item label="*****" value="*****" />
             <Picker.Item label="****" value="****" />
@@ -110,7 +118,10 @@ export default class TaskItem extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  bottomRow: {},
+  bottomRow: {
+    borderWidth:2,
+    borderColor:"red"
+  },
   info: {
     marginTop: 4,
   },
@@ -124,5 +135,12 @@ const styles = StyleSheet.create({
   },
   middleRow: {
     flexDirection: 'row',
+    borderWidth:2,
+    borderColor:"green",
   },
+  pickerView: {
+    borderWidth:2,
+    borderColor:"blue",
+    width:"60%",
+  }
 })
